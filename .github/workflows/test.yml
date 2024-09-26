@@ -1,0 +1,29 @@
+name: 🐛 [TEST] Create Pull Request
+on:
+  workflow_dispatch:
+    inputs:
+      source-branch:
+        description: 'Source Branch'
+        required: true
+      target-branch:
+        description: 'Target Branch'
+        required: true
+      dry-run:
+        description: 'Dry run: Run the workflow without creating a Pull Request'
+        required: false
+        default: true
+            
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+    - name: Create Pull Request
+      id: create-pull-request 
+      uses: jcdcdev/jcdcdev.GitHub.CreatePullRequest@main
+      with:
+        source-branch: ${{ inputs.source-branch }}
+        target-branch: ${{ inputs.target-branch }}
+        dry-run: ${{ inputs.dry-run }}
+        github-token: ${{ secrets.GITHUB_TOKEN }}
