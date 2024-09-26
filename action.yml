@@ -103,7 +103,7 @@ runs:
 
         DIFF_TEXT="```## Files Changed
         diff
-        ${DIFF}
+        ${DIFF_SNIPPET}
         ```"
 
         echo "DIFF_SNIPPET\n\n$DIFF_SNIPPET\n\n"
