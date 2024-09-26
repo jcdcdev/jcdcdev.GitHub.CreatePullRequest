@@ -86,8 +86,7 @@ runs:
         
         echo "Files Changed
         
-        $DIFF_FILES
-        
+        $DIFF_FILES 
         "
 
         DIFF_SNIPPET=$(echo "$DIFF_FILES" | awk '
@@ -101,12 +100,19 @@ runs:
           }
         }')
 
-        DIFF_TEXT="```## Files Changed
-        diff
+        echo "DIFF_SNIPPET
+        
+        $DIFF_SNIPPET
+        "
+
+        DIFF_TEXT="## Files Changed```diff
         ${DIFF_SNIPPET}
         ```"
+        
+        echo "DIFF_TEXT
 
-        echo "DIFF_SNIPPET\n\n$DIFF_SNIPPET\n\n"
+        $DIFF_TEXT
+        "
 
         git merge $SOURCE --no-ff --no-edit
 
