@@ -58,18 +58,6 @@ runs:
           echo "SOURCE is the same as TARGET"
           exit 1
         fi
-
-        # check if source is a valid ref
-        if ! git rev-parse --verify $SOURCE > /dev/null 2>&1; then
-          echo "$SOURCE is not a valid ref"
-          exit 1
-        fi
-
-        # check if target is a valid ref
-        if ! git rev-parse --verify $TARGET > /dev/null 2>&1; then
-          echo "$TARGET is not a valid ref"
-          exit 1
-        fi
     - name: Checkout code
       uses: actions/checkout@v4
       with:
