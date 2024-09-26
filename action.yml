@@ -105,9 +105,9 @@ runs:
         $DIFF_SNIPPET
         "
 
-        DIFF_TEXT="## Files Changed```DIFF
+        DIFF_TEXT="## Files Changed\\\`\\\`\\\`DIFF
         ${DIFF_SNIPPET}
-        ```"
+        \\\`\\\`\\\`"
         
         echo "DIFF_TEXT
 
