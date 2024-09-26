@@ -27,6 +27,7 @@ runs:
   using: "composite"
   steps:
     - name: Set Variables
+      shell: bash
       run: |
         echo "Setting variables"
         SOURCE=${{ inputs.source-branch }}
