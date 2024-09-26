@@ -79,12 +79,28 @@ runs:
           echo "SHOULD_RUN=false" >> $GITHUB_ENV
           exit 
         fi
-          
-        echo "$DIFF_COUNT files changed between ${{ env.TARGET }} and ${{ env.SOURCE }}"
         
+        DIFF=$(git diff --name-only ${{ env.TARGET }} ${{ env.SOURCE }} | awk '{print "- " $0}')
+        echo "$DIFF_COUNT files changed between ${{ env.TARGET }} and ${{ env.SOURCE }}"
+        echo "DIFF=$DIFF" >> $GITHUB_ENV
         git merge $SOURCE --no-ff --no-edit
 
         echo "SHOULD_RUN=true" >> $GITHUB_ENV
+        BODY="${{ steps.changelog.outputs.changelog }}
+        ## Files Changed
+        ${DIFF}"
+        TITLE="${{ steps.gitversion.outputs.NuGetVersionV2 }}"
+
+        echo "TITLE=$TITLE"
+        echo "BODY=$BODY"
+
+        echo "TITLE=$TITLE" >> $GITHUB_ENV
+        
+        {
+          echo 'BODY<<EOF'
+          echo "${BODY}"
+          echo EOF
+        } >> "$GITHUB_ENV"  
     - name: Download GitVersion.yml
       if: ${{ env.SHOULD_RUN == 'true' }}
       shell: bash
@@ -118,12 +134,8 @@ runs:
       env:
         SOURCE: ${{ env.SOURCE }}
         TARGET: ${{ env.TARGET }}
-        TITLE: "${{ steps.gitversion.outputs.NuGetVersionV2 }}"
-        BODY: |          
-          ${{ steps.changelog.outputs.changelog }}
-
-          ## Files Changed
-          ${{ env.DIFF }}
+        TITLE: ${{ env.TITLE }}
+        BODY: ${{ env.BODY}}
         GITHUB_TOKEN: ${{ inputs.github-token }}
       uses: pyrbin/single-pr-updater@latest
       with:
