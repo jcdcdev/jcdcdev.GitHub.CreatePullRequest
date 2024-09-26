@@ -121,6 +121,7 @@ runs:
         include-compare-link: false
         include-links: true
     - name: Set Pull Request Information
+      shell: bash
       if: ${{ env.SHOULD_RUN == 'true' }}
       run: |
         TITLE="${{ steps.gitversion.outputs.NuGetVersionV2 }}"
