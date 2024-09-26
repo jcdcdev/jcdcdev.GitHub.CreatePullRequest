@@ -80,24 +80,17 @@ runs:
           exit 
         fi
         
-        DIFF=$(git diff --name-only ${{ env.TARGET }} ${{ env.SOURCE }} | awk '{print "- " $0}')
+        DIFF_TEXT=$(git diff --name-only ${{ env.TARGET }} ${{ env.SOURCE }} | awk '{print "- " $0}')
         echo "$DIFF_COUNT files changed between ${{ env.TARGET }} and ${{ env.SOURCE }}"
+
         git merge $SOURCE --no-ff --no-edit
 
         echo "SHOULD_RUN=true" >> $GITHUB_ENV
-        BODY="${{ steps.changelog.outputs.changelog }}
-        ## Files Changed
-        ${DIFF}"
-        TITLE="${{ steps.gitversion.outputs.NuGetVersionV2 }}"
-
-        echo "TITLE=$TITLE"
-        echo "BODY=$BODY"
-
-        echo "TITLE=$TITLE" >> $GITHUB_ENV
+        echo 'DIFF_COUNT=$DIFF_COUNT' >> $GITHUB_ENV
 
         {
-          echo 'BODY<<EOF'
-          echo "${BODY}"
+          echo 'DIFF_TEXT<<EOF'
+          echo "${DIFF_TEXT}"
           echo EOF
         } >> "$GITHUB_ENV"  
     - name: Download GitVersion.yml
@@ -127,6 +120,23 @@ runs:
         include-version-as-heading: true
         include-compare-link: false
         include-links: true
+    - name: Set Pull Request Information
+      if: ${{ env.SHOULD_RUN == 'true' }}
+      run: |
+        TITLE="${{ steps.gitversion.outputs.NuGetVersionV2 }}"
+        BODY="${{ steps.changelog.outputs.changelog }}
+        ## Files Changed
+        ${{ env.DIFF_TEXT }}
+        
+        echo "TITLE=$TITLE"
+        echo "BODY=$BODY"
+
+        echo "TITLE=$TITLE" >> $GITHUB_ENV
+        {
+          echo 'BODY<<EOF'
+          echo "${BODY}"
+          echo EOF
+        } >> "$GITHUB_ENV"  
     - name: Create PR
       id: create-pull-request
       if: ${{ env.SHOULD_RUN == 'true' && env.DRY_RUN == 'false' }}
