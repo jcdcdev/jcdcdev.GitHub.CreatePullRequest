@@ -127,7 +127,7 @@ runs:
         TITLE="${{ steps.gitversion.outputs.NuGetVersionV2 }}"
         BODY="${{ steps.changelog.outputs.changelog }}
         ## Files Changed
-        ${{ env.DIFF_TEXT }}
+        ${{ env.DIFF_TEXT }}"
         
         echo "TITLE=$TITLE"
         echo "BODY=$BODY"
