@@ -65,7 +65,7 @@ runs:
         ref: ${{ env.SOURCE }}
     - name: Check for changes
       shell: bash
-      id: check-for-changes
+      id: check-for-changes        
       run: |
         git config user.name "${{ github.actor }}"
         git config user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
@@ -82,7 +82,6 @@ runs:
         
         DIFF=$(git diff --name-only ${{ env.TARGET }} ${{ env.SOURCE }} | awk '{print "- " $0}')
         echo "$DIFF_COUNT files changed between ${{ env.TARGET }} and ${{ env.SOURCE }}"
-        echo "DIFF=$DIFF" >> $GITHUB_ENV
         git merge $SOURCE --no-ff --no-edit
 
         echo "SHOULD_RUN=true" >> $GITHUB_ENV
@@ -95,7 +94,7 @@ runs:
         echo "BODY=$BODY"
 
         echo "TITLE=$TITLE" >> $GITHUB_ENV
-        
+
         {
           echo 'BODY<<EOF'
           echo "${BODY}"
