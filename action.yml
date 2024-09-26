@@ -80,7 +80,13 @@ runs:
           exit 
         fi
         
-        DIFF=$(git diff --name-status ${{ env.TARGET }} ${{ env.SOURCE }} | awk '
+        echo "$DIFF_COUNT files changed between ${{ env.TARGET }} and ${{ env.SOURCE }}"
+
+        DIFF=$(git diff --name-status ${{ env.TARGET }} ${{ env.SOURCE }})
+        
+        echo "Files Changed\n\n$DIFF\n\n"
+
+        DIFF_SNIPPET=$(echo "$DIFF" | awk '
         {
           if ($1 == "A") {
             print "+ " $2
@@ -95,9 +101,9 @@ runs:
         diff
         ${DIFF}
         ```"
-        
-        echo "$DIFF_COUNT files changed between ${{ env.TARGET }} and ${{ env.SOURCE }}"
 
+        echo "DIFF_SNIPPET\n\n$DIFF_SNIPPET\n\n"
+        
         git merge $SOURCE --no-ff --no-edit
 
         echo "SHOULD_RUN=true" >> $GITHUB_ENV
