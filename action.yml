@@ -80,7 +80,22 @@ runs:
           exit 
         fi
         
-        DIFF_TEXT=$(git diff --name-only ${{ env.TARGET }} ${{ env.SOURCE }} | awk '{print "- " $0}')
+        DIFF=$(git diff --name-status ${{ env.TARGET }} ${{ env.SOURCE }} | awk '
+        {
+          if ($1 == "A") {
+            print "+ " $2
+          } else if ($1 == "D") {
+            print "- " $2
+          } else {
+            print "~ " $2
+          }
+        }')
+
+        DIFF_TEXT="```## Files Changed
+        diff
+        ${DIFF}
+        ```"
+        
         echo "$DIFF_COUNT files changed between ${{ env.TARGET }} and ${{ env.SOURCE }}"
 
         git merge $SOURCE --no-ff --no-edit
@@ -126,7 +141,6 @@ runs:
       run: |
         TITLE="${{ steps.gitversion.outputs.NuGetVersionV2 }}"
         BODY="${{ steps.changelog.outputs.changelog }}
-        ## Files Changed
         ${{ env.DIFF_TEXT }}"
         
         echo "TITLE=$TITLE"
