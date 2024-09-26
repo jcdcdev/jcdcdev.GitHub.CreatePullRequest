@@ -73,8 +73,7 @@ runs:
         git fetch --all
         git checkout ${{ env.TARGET }}
 
-        DIFF=$(git diff --name-only ${{ env.TARGET }} ${{ env.SOURCE }})
-        DIFF_COUNT=$(echo $DIFF | wc -l)
+        DIFF_COUNT=$(git diff --name-only ${{ env.TARGET }} ${{ env.SOURCE }} | wc -l)
         if [ $DIFF_COUNT -eq 0 ]; then
           echo "No changes between ${{ env.TARGET }} and ${{ env.SOURCE }}"
           echo "SHOULD_RUN=false" >> $GITHUB_ENV
@@ -84,12 +83,6 @@ runs:
         echo "$DIFF_COUNT files changed between ${{ env.TARGET }} and ${{ env.SOURCE }}"
         
         git merge $SOURCE --no-ff --no-edit
-
-        {
-          echo 'diff<<EOF'
-          echo "${DIFF}"
-          echo 'EOF'
-        } >> $GITHUB_ENV
 
         echo "SHOULD_RUN=true" >> $GITHUB_ENV
     - name: Download GitVersion.yml
@@ -121,7 +114,7 @@ runs:
         include-links: true
     - name: Create PR
       id: create-pull-request
-      if: ${{ env.SHOULD_RUN == 'true' }}
+      if: ${{ env.SHOULD_RUN == 'true' && env.DRY_RUN == 'false' }}
       env:
         SOURCE: ${{ env.SOURCE }}
         TARGET: ${{ env.TARGET }}
