@@ -147,8 +147,8 @@ runs:
       id: changelog
       with:
         version: ${{ steps.gitversion.outputs.NuGetVersionV2 }}
-        head-ref: ${{ env.TARGET }}
-        base-ref: ${{ env.SOURCE }}
+        head-ref: ${{ env.SOURCE }}
+        base-ref: ${{ env.TARGET }}
         github-token: ${{ inputs.github-token }}
         include-version-as-heading: true
         include-compare-link: false
