@@ -148,6 +148,7 @@ runs:
       with:
         version: ${{ steps.gitversion.outputs.NuGetVersionV2 }}
         head-ref: ${{ env.TARGET }}
+        base-ref: ${{ env.SOURCE }}
         github-token: ${{ inputs.github-token }}
         include-version-as-heading: true
         include-compare-link: false
