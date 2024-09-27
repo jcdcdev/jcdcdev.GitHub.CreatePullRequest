@@ -105,7 +105,7 @@ runs:
         $DIFF_SNIPPET
         "
 
-        DIFF_TEXT="## Files Changed
+        DIFF_TEXT="### Files Changed
         \\\`\\\`\\\`diff
         ${DIFF_SNIPPET}
         \\\`\\\`\\\`"
