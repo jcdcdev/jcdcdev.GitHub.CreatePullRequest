@@ -125,10 +125,22 @@ runs:
           echo "${DIFF_TEXT}"
           echo EOF
         } >> "$GITHUB_ENV"  
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        ref: ${{ env.SOURCE }}
     - name: Download GitVersion.yml
       if: ${{ env.SHOULD_RUN == 'true' }}
       shell: bash
-      run: curl -sSL https://raw.githubusercontent.com/jcdcdev/jcdcdev.Umbraco.GitHub.Build/main/GitVersion.yml -o GitVersion.yml
+      run: |
+        # test -f "GitVersion.yml"
+        if [ -f "GitVersion.yml" ]; then
+          echo "GitVersion.yml exists"
+        else
+          echo "GitVersion.yml does not exist"
+          curl -sSL https://raw.githubusercontent.com/jcdcdev/jcdcdev.Umbraco.GitHub.Build/main/GitVersion.yml -o GitVersion.yml
+        fi
     - name: Install GitVersion
       if: ${{ env.SHOULD_RUN == 'true' }}
       uses: gittools/actions/gitversion/setup@v1.1.1
@@ -146,7 +158,7 @@ runs:
       if: ${{ env.SHOULD_RUN == 'true' }}
       id: changelog
       with:
-        version: ${{ steps.gitversion.outputs.NuGetVersionV2 }}
+        version: ${{ steps.gitversion.outputs.SemVer }}
         head-ref: ${{ env.SOURCE }}
         base-ref: ${{ env.TARGET }}
         github-token: ${{ inputs.github-token }}
@@ -157,7 +169,7 @@ runs:
       shell: bash
       if: ${{ env.SHOULD_RUN == 'true' }}
       run: |
-        TITLE="${{ steps.gitversion.outputs.NuGetVersionV2 }}"
+        TITLE="${{ steps.gitversion.outputs.SemVer }}"
         BODY="${{ steps.changelog.outputs.changelog }}
         ${{ env.DIFF_TEXT }}"
         
