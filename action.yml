@@ -63,6 +63,17 @@ runs:
       with:
         fetch-depth: 0
         ref: ${{ env.SOURCE }}
+    - name: Download GitVersion.yml
+      if: ${{ env.SHOULD_RUN == 'true' }}
+      shell: bash
+      run: |
+        # test -f "GitVersion.yml"
+        if [ -f "GitVersion.yml" ]; then
+          echo "GitVersion.yml exists"
+        else
+          echo "GitVersion.yml does not exist"
+          curl -sSL https://raw.githubusercontent.com/jcdcdev/jcdcdev.Umbraco.GitHub.Build/main/GitVersion.yml -o GitVersion.yml
+        fi
     - name: Check for changes
       shell: bash
       id: check-for-changes        
@@ -125,22 +136,6 @@ runs:
           echo "${DIFF_TEXT}"
           echo EOF
         } >> "$GITHUB_ENV"  
-    - name: Checkout code
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-        ref: ${{ env.SOURCE }}
-    - name: Download GitVersion.yml
-      if: ${{ env.SHOULD_RUN == 'true' }}
-      shell: bash
-      run: |
-        # test -f "GitVersion.yml"
-        if [ -f "GitVersion.yml" ]; then
-          echo "GitVersion.yml exists"
-        else
-          echo "GitVersion.yml does not exist"
-          curl -sSL https://raw.githubusercontent.com/jcdcdev/jcdcdev.Umbraco.GitHub.Build/main/GitVersion.yml -o GitVersion.yml
-        fi
     - name: Install GitVersion
       if: ${{ env.SHOULD_RUN == 'true' }}
       uses: gittools/actions/gitversion/setup@v1.1.1
