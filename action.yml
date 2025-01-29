@@ -149,7 +149,7 @@ runs:
       uses: gittools/actions/gitversion/execute@v1.1.1
       with:
         useConfigFile: true
-        configFilePath: "$RUNNER_TEMP/GitVersion.yml"
+        configFilePath: "${{ runner.temp }}/GitVersion.yml"
         disableNormalization: true 
     - uses: jcdcdev/jcdcdev.Github.GenerateChangelog@main
       if: ${{ env.SHOULD_RUN == 'true' }}
