@@ -74,6 +74,8 @@ runs:
           echo "GitVersion.yml does not exist"
           curl -sSL https://raw.githubusercontent.com/jcdcdev/jcdcdev.Umbraco.GitHub.Build/main/GitVersion.yml -o GitVersion.yml
         fi
+
+        cp GitVersion.yml $RUNNER_TEMP/GitVersion.yml
     - name: Check for changes
       shell: bash
       id: check-for-changes        
@@ -147,7 +149,7 @@ runs:
       uses: gittools/actions/gitversion/execute@v1.1.1
       with:
         useConfigFile: true
-        configFilePath: "GitVersion.yml"
+        configFilePath: "$RUNNER_TEMP/GitVersion.yml"
         disableNormalization: true 
     - uses: jcdcdev/jcdcdev.Github.GenerateChangelog@main
       if: ${{ env.SHOULD_RUN == 'true' }}
