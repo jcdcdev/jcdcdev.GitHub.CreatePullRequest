@@ -64,7 +64,6 @@ runs:
         fetch-depth: 0
         ref: ${{ env.SOURCE }}
     - name: Download GitVersion.yml
-      if: ${{ env.SHOULD_RUN == 'true' }}
       shell: bash
       run: |
         # test -f "GitVersion.yml"
