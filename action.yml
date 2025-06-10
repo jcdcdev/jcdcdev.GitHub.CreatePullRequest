@@ -189,7 +189,7 @@ runs:
         GITHUB_TOKEN: ${{ inputs.github-token }}
       uses: pyrbin/single-pr-updater@latest
       with:
-        label: "🚀 release (v${{ steps.gitversion.outputs.Major }})"
+        label: 🚀 release
         head: ${{ env.SOURCE }}
         base: ${{ env.TARGET }}
         title: ${{ env.TITLE }}
