@@ -77,11 +77,11 @@ runs:
         cp GitVersion.yml $RUNNER_TEMP/GitVersion.yml
     - name: Check for changes
       shell: bash
-      id: check-for-changes        
+      id: check-for-changes
       run: |
         git config user.name "${{ github.actor }}"
         git config user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
-      
+
         git fetch --all
         git checkout ${{ env.TARGET }}
 
@@ -91,13 +91,13 @@ runs:
           echo "SHOULD_RUN=false" >> $GITHUB_ENV
           exit 
         fi
-        
+
         echo "$DIFF_COUNT files changed between ${{ env.TARGET }} and ${{ env.SOURCE }}"
 
         DIFF_FILES=$(git diff --name-status ${{ env.TARGET }} ${{ env.SOURCE }})
-        
+
         echo "Files Changed
-        
+
         $DIFF_FILES 
         "
 
@@ -113,7 +113,7 @@ runs:
         }')
 
         echo "DIFF_SNIPPET
-        
+
         $DIFF_SNIPPET
         "
 
@@ -121,7 +121,7 @@ runs:
         \\\`\\\`\\\`diff
         ${DIFF_SNIPPET}
         \\\`\\\`\\\`"
-        
+
         echo "DIFF_TEXT
 
         $DIFF_TEXT
@@ -136,7 +136,7 @@ runs:
           echo 'DIFF_TEXT<<EOF'
           echo "${DIFF_TEXT}"
           echo EOF
-        } >> "$GITHUB_ENV"  
+        } >> "$GITHUB_ENV"
     - name: Install GitVersion
       if: ${{ env.SHOULD_RUN == 'true' }}
       uses: gittools/actions/gitversion/setup@v1.1.1
@@ -149,7 +149,7 @@ runs:
       with:
         useConfigFile: true
         configFilePath: "${{ runner.temp }}/GitVersion.yml"
-        disableNormalization: true 
+        disableNormalization: true
     - uses: jcdcdev/jcdcdev.Github.GenerateChangelog@main
       if: ${{ env.SHOULD_RUN == 'true' }}
       id: changelog
@@ -168,7 +168,7 @@ runs:
         TITLE="${{ steps.gitversion.outputs.SemVer }}"
         BODY="${{ steps.changelog.outputs.changelog }}
         ${{ env.DIFF_TEXT }}"
-        
+
         echo "TITLE=$TITLE"
         echo "BODY=$BODY"
 
@@ -177,7 +177,7 @@ runs:
           echo 'BODY<<EOF'
           echo "${BODY}"
           echo EOF
-        } >> "$GITHUB_ENV"  
+        } >> "$GITHUB_ENV"
     - name: Create PR
       id: create-pull-request
       if: ${{ env.SHOULD_RUN == 'true' && env.DRY_RUN == 'false' }}
@@ -189,7 +189,7 @@ runs:
         GITHUB_TOKEN: ${{ inputs.github-token }}
       uses: pyrbin/single-pr-updater@latest
       with:
-        label: 🚀 release
+        label: "🚀 release ${{ steps.gitversion.outputs.SemVer }}"
         head: ${{ env.SOURCE }}
         base: ${{ env.TARGET }}
         title: ${{ env.TITLE }}
