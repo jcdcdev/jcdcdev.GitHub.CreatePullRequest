@@ -70,8 +70,12 @@ runs:
         if [ -f "GitVersion.yml" ]; then
           echo "GitVersion.yml exists"
         else
+          VERSION_YML="main"
+          if [[ "${{ env.TARGET }}" == *"17"* ]]; then
+            VERSION_YML="v17"
+          fi
           echo "GitVersion.yml does not exist"
-          curl -sSL https://raw.githubusercontent.com/jcdcdev/jcdcdev.Umbraco.GitHub.Build/main/GitVersion.yml -o GitVersion.yml
+          curl -sSL https://raw.githubusercontent.com/jcdcdev/jcdcdev.Umbraco.GitHub.Build/${VERSION_YML}/config/GitVersion.yml -o GitVersion.yml
         fi
 
         cp GitVersion.yml $RUNNER_TEMP/GitVersion.yml
