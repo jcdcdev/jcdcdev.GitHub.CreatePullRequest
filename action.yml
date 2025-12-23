@@ -8,7 +8,7 @@ inputs:
   dry-run:
     description: "Dry run: Run the workflow without creating a Pull Request"
     required: false
-    default: false
+    default: "false"
   source-branch:
     description: "Source branch"
     required: true
@@ -63,19 +63,16 @@ runs:
       with:
         fetch-depth: 0
         ref: ${{ env.SOURCE }}
-    - name: Download GitVersion.yml
+    - name: Confirm GitVersion.yml
       shell: bash
       run: |
         # test -f "GitVersion.yml"
         if [ -f "GitVersion.yml" ]; then
           echo "GitVersion.yml exists"
         else
-          VERSION_YML="main"
-          if [[ "${{ env.TARGET }}" == *"17"* ]]; then
-            VERSION_YML="v17"
-          fi
-          echo "GitVersion.yml does not exist"
-          curl -sSL https://raw.githubusercontent.com/jcdcdev/jcdcdev.Umbraco.GitHub.Build/${VERSION_YML}/config/GitVersion.yml -o GitVersion.yml
+          echo "GitVersion.yml does not exist!"
+          echo "Please add a GitVersion.yml file to the root of your repository. Visit https://gitversion.net/docs/reference/configuration for more information."
+          exit 1
         fi
 
         cp GitVersion.yml $RUNNER_TEMP/GitVersion.yml
@@ -143,15 +140,14 @@ runs:
         } >> "$GITHUB_ENV"
     - name: Install GitVersion
       if: ${{ env.SHOULD_RUN == 'true' }}
-      uses: gittools/actions/gitversion/setup@v1.1.1
+      uses: gittools/actions/gitversion/setup@v4.2.0
       with:
-        versionSpec: "5.x"
+        versionSpec: "6.4.x"
     - name: Determine Version
       if: ${{ env.SHOULD_RUN == 'true' }}
       id: gitversion
-      uses: gittools/actions/gitversion/execute@v1.1.1
+      uses: gittools/actions/gitversion/execute@v4.2.0
       with:
-        useConfigFile: true
         configFilePath: "${{ runner.temp }}/GitVersion.yml"
         disableNormalization: true
     - uses: jcdcdev/jcdcdev.Github.GenerateChangelog@main
