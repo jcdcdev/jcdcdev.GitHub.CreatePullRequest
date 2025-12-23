@@ -150,7 +150,7 @@ runs:
       with:
         configFilePath: "${{ runner.temp }}/GitVersion.yml"
         disableNormalization: true
-    - uses: jcdcdev/jcdcdev.Github.GenerateChangelog@main
+    - uses: jcdcdev/jcdcdev.Github.GenerateChangelog@v1
       if: ${{ env.SHOULD_RUN == 'true' }}
       id: changelog
       with:
